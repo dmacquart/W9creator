@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>W9Creator — Government Forms, Made Simple</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="pdf-lib.min.js"></script>
+  <style>
+    :root {
+      --navy: #0f2444;
+      --navy-mid: #1a3a6b;
+      --green: #2ecc8e;
+      --green-dark: #24a872;
+      --white: #ffffff;
+      --off-white: #f5f7fa;
+      --gray: #8a96a8;
+      --gray-light: #e8ecf2;
+      --text: #1a2535;
+      --error: #e05252;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: var(--off-white);
+      min-height: 100vh;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      background: var(--navy);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      color: var(--white);
+      font-size: 1.4rem;
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--green); }
+    .nav-cta {
+      background: var(--green);
+      color: var(--navy);
+      border: none;
+      padding: 9px 22px;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--green-dark); }
+
+    /* ─── HERO ─── */
+    #landing {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      padding: 90px 40px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #landing::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 340px; height: 340px;
+      border-radius: 50%;
+      background: rgba(46,204,142,0.08);
+      pointer-events: none;
+    }
+    #landing::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -40px;
+      width: 260px; height: 260px;
+      border-radius: 50%;
+      background: rgba(46,204,142,0.06);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(46,204,142,0.15);
+      color: var(--green);
+      border: 1px solid rgba(46,204,142,0.3);
+      padding: 5px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-family: 'DM Serif Display', serif;
+      color: var(--white);
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      line-height: 1.15;
+      max-width: 640px;
+      margin: 0 auto 20px;
+    }
+    .hero-title em {
+      color: var(--green);
+      font-style: italic;
+    }
+    .hero-sub {
+      color: rgba(255,255,255,0.65);
+      font-size: 1.05rem;
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--green);
+      color: var(--navy);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(46,204,142,0.3);
+    }
+    .btn-primary:hover {
+      background: var(--green-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(46,204,142,0.4);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--white);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.7); }
+
+    /* ─── TRUST STRIP ─── */
+    .trust-strip {
+      background: var(--white);
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--gray-light);
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--gray);
+      font-weight: 500;
+    }
+    .trust-item .icon { font-size: 1rem; }
+
+    /* ─── HOW IT WORKS ─── */
+    .section {
+      padding: 72px 40px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .section-label {
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--green-dark);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      text-align: center;
+      color: var(--navy);
+      margin-bottom: 48px;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 28px;
+    }
+    .step {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 32px 28px;
+      box-shadow: 0 2px 12px rgba(15,36,68,0.06);
+      position: relative;
+    }
+    .step-num {
+      width: 40px; height: 40px;
+      background: var(--navy);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+    .step h3 {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: var(--navy);
+    }
+    .step p {
+      color: var(--gray);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* ─── FORM SECTION ─── */
+    #form-section {
+      background: var(--off-white);
+      padding: 72px 20px;
+    }
+    .form-container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .form-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .form-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.9rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .form-header p {
+      color: var(--gray);
+      font-size: 0.95rem;
+    }
+
+    /* Progress bar */
+    .progress-wrap {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 24px 28px 0;
+      box-shadow: 0 2px 16px rgba(15,36,68,0.08);
+      margin-bottom: 0;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--gray);
+      margin-bottom: 10px;
+    }
+    .progress-bar-bg {
+      background: var(--gray-light);
+      border-radius: 99px;
+      height: 6px;
+      margin-bottom: 24px;
+    }
+    .progress-bar-fill {
+      background: var(--green);
+      height: 6px;
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    /* Steps */
+    .form-step { display: none; }
+    .form-step.active { display: block; }
+
+    .step-card {
+      background: var(--white);
+      border-radius: 0 0 12px 12px;
+      padding: 28px 28px 32px;
+      box-shadow: 0 2px 16px rgba(15,36,68,0.08);
+    }
+
+    .q-label {
+      font-weight: 600;
+      font-size: 1.05rem;
+      color: var(--navy);
+      margin-bottom: 6px;
+      display: block;
+    }
+    .q-hint {
+      font-size: 0.82rem;
+      color: var(--gray);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--gray-light);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 22px;
+      background: var(--white);
+    }
+    .form-input:focus { border-color: var(--navy); }
+    .form-input.error { border-color: var(--error); }
+
+    .radio-group { margin-bottom: 22px; }
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1.5px solid var(--gray-light);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: 0.95rem;
+    }
+    .radio-option:hover { border-color: var(--navy-mid); background: var(--off-white); }
+    .radio-option.selected { border-color: var(--navy); background: rgba(15,36,68,0.04); }
+    .radio-option input { accent-color: var(--navy); width: 16px; height: 16px; }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding-top: 8px;
+    }
+    .btn-back {
+      background: none;
+      border: 1.5px solid var(--gray-light);
+      color: var(--gray);
+      padding: 11px 24px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+    .btn-next {
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-next:hover { background: var(--navy-mid); }
+    .btn-generate {
+      background: var(--green);
+      color: var(--navy);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(46,204,142,0.3);
+    }
+    .btn-generate:hover { background: var(--green-dark); }
+
+    /* Review screen */
+    .review-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+    .review-table tr { border-bottom: 1px solid var(--gray-light); }
+    .review-table td { padding: 12px 4px; font-size: 0.9rem; }
+    .review-table td:first-child { color: var(--gray); width: 45%; font-weight: 500; }
+    .review-table td:last-child { color: var(--text); font-weight: 500; }
+    .edit-link {
+      font-size: 0.8rem;
+      color: var(--navy-mid);
+      text-decoration: underline;
+      cursor: pointer;
+      float: right;
+    }
+
+    /* Success */
+    .success-screen {
+      text-align: center;
+      padding: 48px 28px;
+    }
+    .success-icon {
+      width: 72px; height: 72px;
+      background: rgba(46,204,142,0.12);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 24px;
+    }
+    .success-screen h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.7rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .success-screen p {
+      color: var(--gray);
+      font-size: 0.95rem;
+      margin-bottom: 28px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .download-btn {
+      background: var(--green);
+      color: var(--navy);
+      border: none;
+      padding: 14px 36px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(46,204,142,0.3);
+      text-decoration: none;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 28px 40px;
+      font-size: 0.82rem;
+    }
+    footer a { color: rgba(255,255,255,0.5); text-decoration: none; margin: 0 12px; }
+    footer a:hover { color: var(--white); }
+
+    /* Error */
+    .error-msg {
+      color: var(--error);
+      font-size: 0.82rem;
+      margin-top: -16px;
+      margin-bottom: 12px;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .form-step.active { animation: fadeUp 0.3s ease; }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      nav { padding: 0 20px; }
+      #landing { padding: 60px 24px; }
+      .section { padding: 52px 20px; }
+      .pricing-bg { padding: 52px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">W9<span>Creator</span></div>
+  <button class="nav-cta" onclick="scrollToForm()">Create My W-9 — Free</button>
+</nav>
+
+<!-- HERO -->
+<section id="landing">
+  <div class="hero-badge">✦ IRS Form W-9 · Free · Ready in 1 Minute</div>
+  <h1 class="hero-title">Your W-9, done <em>right</em> — in less than a minute.</h1>
+  <p class="hero-sub">Answer plain-English questions. We fill out the official IRS form. Download your completed PDF instantly.</p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="scrollToForm()">Create My W-9 — Free</button>
+    <button class="btn-ghost" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See how it works</button>
+  </div>
+</section>
+
+<!-- TRUST -->
+<div class="trust-strip">
+  <div class="trust-item"><span class="icon">🔒</span> Secure & Private</div>
+  <div class="trust-item"><span class="icon">📄</span> Official IRS W-9 Form</div>
+  <div class="trust-item"><span class="icon">⚡</span> Instant PDF Download</div>
+  <div class="trust-item"><span class="icon">✅</span> No Account Required</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-label">Simple Process</div>
+  <h2 class="section-title">Three steps to your completed form</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Answer Simple Questions</h3>
+      <p>No confusing IRS jargon. We ask plain-English questions that take less than a minute to complete.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>We Fill the Form</h3>
+      <p>Your answers are placed into the official IRS W-9 form accurately, every field, every time.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Download & Send</h3>
+      <p>Get your completed PDF instantly. Print it, sign it, and send it to whoever needs it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FORM SECTION -->
+<section id="form-section">
+  <div class="form-container" id="formArea">
+    <div class="form-header">
+      <h2>Create Your W-9</h2>
+      <p>Answer the questions below — we'll handle the rest.</p>
+    </div>
+
+    <!-- STEP WRAPPER -->
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-label">
+        <span id="stepLabel">Step 1 of 7</span>
+        <span id="stepTitle">Your Name</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill" style="width:14%"></div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Legal Name -->
+    <div class="form-step active step-card" id="step1">
+      <label class="q-label">What is your legal name?</label>
+      <span class="q-hint">
+        <strong>Sole proprietor / individual:</strong> Enter your personal legal name exactly as it appears on your tax return.<br>
+        <strong>Business (LLC, Corp, Partnership):</strong> Enter your official registered business name.
+      </span>
+      <input class="form-input" id="legalName" type="text" placeholder="e.g. Jane A. Smith or Acme LLC" />
+      <div class="error-msg" id="err1">Please enter your legal name.</div>
+      <div class="btn-row">
+        <button class="btn-next" onclick="nextStep(1)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Business Name -->
+    <div class="form-step step-card" id="step2">
+      <label class="q-label">Do you have a separate business or DBA name?</label>
+      <span class="q-hint">"DBA" means "Doing Business As." Leave blank if you operate under your own name.</span>
+      <div class="radio-group">
+        <label class="radio-option" onclick="selectRadio(this, 'hasBiz')">
+          <input type="radio" name="hasBiz" value="yes"> Yes, I have a business/DBA name
+        </label>
+        <label class="radio-option" onclick="selectRadio(this, 'hasBiz')">
+          <input type="radio" name="hasBiz" value="no"> No, I use my personal name only
+        </label>
+      </div>
+      <div id="bizNameField" style="display:none">
+        <label class="q-label">What is your business or DBA name?</label>
+        <input class="form-input" id="bizName" type="text" placeholder="e.g. Smith Consulting LLC" />
+      </div>
+      <div class="error-msg" id="err2">Please make a selection.</div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(2)">← Back</button>
+        <button class="btn-next" onclick="nextStep(2)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Entity Type -->
+    <div class="form-step step-card" id="step3">
+      <label class="q-label">Which best describes you?</label>
+      <span class="q-hint">This determines how your W-9 is classified with the IRS.</span>
+      <div class="radio-group" id="entityGroup">
+        <label class="radio-option" onclick="selectRadio(this, 'entity')">
+          <input type="radio" name="entity" value="Individual/Sole Proprietor"> Individual / Sole Proprietor
+        </label>
+        <label class="radio-option" onclick="selectRadio(this, 'entity')">
+          <input type="radio" name="entity" value="LLC"> LLC (Limited Liability Company)
+        </label>
+        <label class="radio-option" onclick="selectRadio(this, 'entity')">
+          <input type="radio" name="entity" value="C Corporation"> C Corporation
+        </label>
+        <label class="radio-option" onclick="selectRadio(this, 'entity')">
+          <input type="radio" name="entity" value="S Corporation"> S Corporation
+        </label>
+        <label class="radio-option" onclick="selectRadio(this, 'entity')">
+          <input type="radio" name="entity" value="Partnership"> Partnership
+        </label>
+        <label class="radio-option" onclick="selectRadio(this, 'entity')">
+          <input type="radio" name="entity" value="Trust/Estate"> Trust / Estate
+        </label>
+      </div>
+      <div class="error-msg" id="err3">Please select your entity type.</div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(3)">← Back</button>
+        <button class="btn-next" onclick="nextStep(3)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: LLC Tax Classification (conditional) -->
+    <div class="form-step step-card" id="step4">
+      <label class="q-label">How is your LLC taxed?</label>
+      <span class="q-hint">The IRS needs to know how your LLC files its taxes. Check your prior tax return if unsure.</span>
+      <div class="radio-group" id="llcGroup">
+        <label class="radio-option" onclick="selectRadio(this, 'llcTax')">
+          <input type="radio" name="llcTax" value="D"> As a sole proprietor (single-member, disregarded entity)
+        </label>
+        <label class="radio-option" onclick="selectRadio(this, 'llcTax')">
+          <input type="radio" name="llcTax" value="P"> As a partnership (multi-member LLC)
+        </label>
+        <label class="radio-option" onclick="selectRadio(this, 'llcTax')">
+          <input type="radio" name="llcTax" value="C"> As a C Corporation
+        </label>
+        <label class="radio-option" onclick="selectRadio(this, 'llcTax')">
+          <input type="radio" name="llcTax" value="S"> As an S Corporation
+        </label>
+      </div>
+      <div class="error-msg" id="err4">Please select how your LLC is taxed.</div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(4)">← Back</button>
+        <button class="btn-next" onclick="nextStep(4)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: Address -->
+    <div class="form-step step-card" id="step5">
+      <label class="q-label">What is your address?</label>
+      <span class="q-hint">Enter the address the requester has on file for you, or your home/business address.</span>
+      <input class="form-input" id="street" type="text" placeholder="Street address" />
+      <input class="form-input" id="city" type="text" placeholder="City" />
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+        <input class="form-input" id="state" type="text" placeholder="State (e.g. CA)" maxlength="2" style="margin-bottom:22px" />
+        <input class="form-input" id="zip" type="text" placeholder="ZIP code" maxlength="10" style="margin-bottom:22px" />
+      </div>
+      <div class="error-msg" id="err5">Please fill in all address fields.</div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(5)">← Back</button>
+        <button class="btn-next" onclick="nextStep(5)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 6: Tax ID -->
+    <div class="form-step step-card" id="step6">
+      <label class="q-label">What type of tax ID do you have?</label>
+      <span class="q-hint">Individuals typically use their SSN. Most businesses use an EIN.</span>
+      <div class="radio-group">
+        <label class="radio-option" onclick="selectRadio(this,'taxIdType'); showTaxIdInput('ssn')">
+          <input type="radio" name="taxIdType" value="SSN"> Social Security Number (SSN)
+        </label>
+        <label class="radio-option" onclick="selectRadio(this,'taxIdType'); showTaxIdInput('ein')">
+          <input type="radio" name="taxIdType" value="EIN"> Employer Identification Number (EIN)
+        </label>
+      </div>
+      <div id="taxIdInput" style="display:none">
+        <label class="q-label" id="taxIdLabel">Your SSN</label>
+        <span class="q-hint" id="taxIdHint">Format: XXX-XX-XXXX</span>
+        <input class="form-input" id="taxId" type="text" placeholder="e.g. 123-45-6789" maxlength="11" />
+      </div>
+      <div class="error-msg" id="err6">Please enter your tax ID number.</div>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(6)">← Back</button>
+        <button class="btn-next" onclick="nextStep(6)">Continue →</button>
+      </div>
+    </div>
+
+    <!-- STEP 7: Review -->
+    <div class="form-step step-card" id="step7">
+      <label class="q-label" style="margin-bottom:16px">Review your information</label>
+      <span class="q-hint" style="display:block;margin-bottom:20px">Please confirm everything looks correct before signing your W-9.</span>
+      <table class="review-table" id="reviewTable"></table>
+      <div class="btn-row">
+        <button class="btn-back" onclick="prevStep(7)">← Edit</button>
+        <button class="btn-next" onclick="nextStep(7)">Continue to Sign →</button>
+      </div>
+    </div>
+
+    <!-- STEP 8: Sign & Date -->
+    <div class="form-step step-card" id="step8">
+      <label class="q-label" style="margin-bottom:6px">Sign & Date</label>
+      <span class="q-hint" style="display:block; margin-bottom:18px">Draw your signature below using your mouse or finger.</span>
+
+      <!-- Certification box -->
+      <div style="background:var(--off-white); border:1.5px solid var(--gray-light); border-radius:8px; padding:16px 18px; margin-bottom:20px; font-size:0.82rem; color:var(--gray); line-height:1.6;">
+        <strong style="color:var(--text); display:block; margin-bottom:6px;">Certification</strong>
+        Under penalties of perjury, I certify that: (1) The number shown on this form is my correct taxpayer identification number, (2) I am not subject to backup withholding, (3) I am a U.S. citizen or other U.S. person, and (4) the FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct.
+      </div>
+
+      <!-- Signature canvas -->
+      <div style="margin-bottom:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <label class="q-label" style="margin-bottom:0">Your Signature</label>
+          <button onclick="clearSignature()" style="background:none; border:none; color:var(--gray); font-size:0.8rem; cursor:pointer; text-decoration:underline;">Clear</button>
+        </div>
+        <canvas id="signatureCanvas"
+          style="width:100%; height:160px; border:1.5px solid var(--gray-light); border-radius:8px; background:#fff; cursor:crosshair; touch-action:none; display:block;">
+        </canvas>
+        <div class="error-msg" id="err8sig">Please sign before continuing.</div>
+      </div>
+
+      <!-- Date -->
+      <div style="margin-top:18px; margin-bottom:22px;">
+        <label class="q-label">Date</label>
+        <input class="form-input" id="signDate" type="text" readonly
+          style="background:var(--off-white); color:var(--gray); cursor:not-allowed; margin-bottom:0;" />
+      </div>
+
+      <!-- Email -->
+      <div style="margin-bottom:8px;">
+        <label class="q-label">Where should we send your completed W-9?</label>
+        <span class="q-hint">Enter your email to receive a copy.</span>
+        <input class="form-input" id="customerEmail" type="email" placeholder="you@example.com" style="margin-bottom:0;" />
+        <div class="error-msg" id="err8email">Please enter a valid email address.</div>
+      </div>
+
+      <div class="btn-row" style="margin-top:24px;">
+        <button class="btn-back" onclick="prevStep(8)">← Back</button>
+        <button class="btn-generate" onclick="generateForm()">Generate My W-9 →</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="form-step" id="stepSuccess">
+      <div class="success-screen">
+        <div class="success-icon" id="successIcon">⏳</div>
+        <h2 id="successTitle">Generating your W-9...</h2>
+        <p id="successMsg">Please wait while we prepare your completed form.</p>
+        <div id="downloadArea" style="display:none;">
+          <a class="download-btn" id="downloadBtn" href="#" download="W-9_Form.pdf">
+            ⬇ Download My W-9 PDF
+          </a>
+          <div style="margin-top:20px; color:var(--gray); font-size:0.82rem;" id="emailConfirm">
+            A copy is being sent to your email.
+          </div>
+        </div>
+        <div id="generateError" style="display:none; color:var(--error); font-size:0.9rem; margin-top:12px;"></div>
+        <div style="margin-top:28px; padding-top:24px; border-top:1px solid var(--gray-light)">
+          <div style="font-size:0.85rem; color:var(--gray); margin-bottom:12px">Need to create another form?</div>
+          <button class="btn-next" onclick="resetForm()">Start Over</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /form-container -->
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="margin-bottom:10px">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Contact</a>
+  </div>
+  © 2025 W9Creator.com · This service prepares forms for informational purposes only. Not legal or tax advice.
+</footer>
+
+<script>
+  const totalSteps = 8;
+  let currentStep = 1;
+  const stepTitles = ['Your Name','Business Name','Entity Type','LLC Classification','Address','Tax ID','Review','Sign & Date'];
+
+  function updateProgress(step) {
+    const pct = Math.round((step / totalSteps) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('stepLabel').textContent = `Step ${step} of ${totalSteps}`;
+    document.getElementById('stepTitle').textContent = stepTitles[step-1];
+  }
+
+  // Show a given step, initializing signature pad on step 8
+  function showStep(n) {
+    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('step' + n);
+    if (el) el.classList.add('active');
+    const pw = document.getElementById('progressWrap');
+    if (n === 'Payment' || n === 'Success') {
+      pw.style.display = 'none';
+    } else {
+      pw.style.display = 'block';
+      updateProgress(n);
+    }
+    currentStep = n;
+    if (n === 8) setTimeout(initSignaturePad, 50);
+  }
+
+  function selectRadio(el, name) {
+    document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+      r.closest('.radio-option').classList.remove('selected');
+    });
+    el.classList.add('selected');
+    // handle conditional fields
+    if (name === 'hasBiz') {
+      const val = el.querySelector('input').value;
+      document.getElementById('bizNameField').style.display = val === 'yes' ? 'block' : 'none';
+    }
+  }
+
+  function showTaxIdInput(type) {
+    document.getElementById('taxIdInput').style.display = 'block';
+    if (type === 'ssn') {
+      document.getElementById('taxIdLabel').textContent = 'Your Social Security Number';
+      document.getElementById('taxIdHint').textContent = 'Format: XXX-XX-XXXX';
+      document.getElementById('taxId').placeholder = '123-45-6789';
+      document.getElementById('taxId').maxLength = 11;
+    } else {
+      document.getElementById('taxIdLabel').textContent = 'Your Employer Identification Number';
+      document.getElementById('taxIdHint').textContent = 'Format: XX-XXXXXXX';
+      document.getElementById('taxId').placeholder = '12-3456789';
+      document.getElementById('taxId').maxLength = 10;
+    }
+  }
+
+  function hideErr(id) {
+    document.getElementById(id).classList.remove('visible');
+  }
+
+  function showErr(id) {
+    document.getElementById(id).classList.add('visible');
+  }
+
+  function getRadio(name) {
+    const el = document.querySelector(`input[name="${name}"]:checked`);
+    return el ? el.value : null;
+  }
+
+  function nextStep(from) {
+    // Validate
+    if (from === 1) {
+      const v = document.getElementById('legalName').value.trim();
+      if (!v) { showErr('err1'); return; } else hideErr('err1');
+      showStep(2);
+    } else if (from === 2) {
+      const biz = getRadio('hasBiz');
+      if (!biz) { showErr('err2'); return; } else hideErr('err2');
+      showStep(3);
+    } else if (from === 3) {
+      const ent = getRadio('entity');
+      if (!ent) { showErr('err3'); return; } else hideErr('err3');
+      if (ent === 'LLC') { showStep(4); }
+      else { showStep(5); }
+    } else if (from === 4) {
+      const llc = getRadio('llcTax');
+      if (!llc) { showErr('err4'); return; } else hideErr('err4');
+      showStep(5);
+    } else if (from === 5) {
+      const s = document.getElementById('street').value.trim();
+      const c = document.getElementById('city').value.trim();
+      const st = document.getElementById('state').value.trim();
+      const z = document.getElementById('zip').value.trim();
+      if (!s || !c || !st || !z) { showErr('err5'); return; } else hideErr('err5');
+      showStep(6);
+    } else if (from === 6) {
+      const tid = getRadio('taxIdType');
+      const tidVal = document.getElementById('taxId').value.trim();
+      if (!tid || !tidVal) { showErr('err6'); return; } else hideErr('err6');
+      buildReview();
+      showStep(7);
+    } else if (from === 7) {
+      buildReview();
+      // Set today's date on signature step
+      const today = new Date();
+      document.getElementById('signDate').value = today.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric'});
+      showStep(8);
+    }
+  }
+
+  function prevStep(from) {
+    if (from === 2) showStep(1);
+    else if (from === 3) showStep(2);
+    else if (from === 4) showStep(3);
+    else if (from === 5) {
+      const ent = getRadio('entity');
+      showStep(ent === 'LLC' ? 4 : 3);
+    }
+    else if (from === 6) showStep(5);
+    else if (from === 7) showStep(6);
+    else if (from === 8) showStep(7);
+  }
+
+  function buildReview() {
+    const hasBiz = getRadio('hasBiz');
+    const entity = getRadio('entity');
+    const llcTax = getRadio('llcTax');
+    const taxType = getRadio('taxIdType');
+    const taxId = document.getElementById('taxId').value;
+    const masked = taxId.slice(0, -4).replace(/\d/g, '•') + taxId.slice(-4);
+
+    let rows = [
+      ['Legal Name', document.getElementById('legalName').value],
+      ['Business/DBA Name', hasBiz === 'yes' ? (document.getElementById('bizName').value || '—') : '—'],
+      ['Entity Type', entity + (entity === 'LLC' && llcTax ? ` (taxed as ${llcTax === 'D' ? 'Sole Prop' : llcTax === 'P' ? 'Partnership' : llcTax + ' Corp'})` : '')],
+      ['Address', `${document.getElementById('street').value}, ${document.getElementById('city').value}, ${document.getElementById('state').value} ${document.getElementById('zip').value}`],
+      [taxType || 'Tax ID Type', `${taxType}: ${masked}`],
+    ];
+
+    const table = document.getElementById('reviewTable');
+    table.innerHTML = rows.map(r => `
+      <tr>
+        <td>${r[0]}</td>
+        <td>${r[1]}</td>
+      </tr>
+    `).join('');
+  }
+
+  async function generateForm() {
+    const email = document.getElementById('customerEmail').value.trim();
+    const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const sigEmpty = isSignatureEmpty();
+    let valid = true;
+
+    if (sigEmpty) { showErr('err8sig'); valid = false; } else hideErr('err8sig');
+    if (!emailValid) { showErr('err8email'); valid = false; } else hideErr('err8email');
+    if (!valid) return;
+
+    // Collect all form data
+    const data = collectFormData();
+    data.email = email;
+
+    // Show success screen in loading state
+    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('stepSuccess').classList.add('active');
+    document.getElementById('progressWrap').style.display = 'none';
+
+    try {
+      const pdfBytes = await buildW9PDF(data);
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+
+      // Update success screen
+      document.getElementById('successIcon').textContent = '✅';
+      document.getElementById('successTitle').textContent = 'Your W-9 is ready!';
+      document.getElementById('successMsg').textContent = 'Your completed IRS W-9 has been generated. Download it below, print it, sign it, and send it to whoever requested it.';
+      document.getElementById('downloadBtn').href = url;
+      document.getElementById('downloadBtn').download = `W-9_${data.legalName.replace(/\s+/g,'_')}.pdf`;
+      document.getElementById('downloadArea').style.display = 'block';
+      document.getElementById('emailConfirm').textContent = `A copy is being sent to ${email}.`;
+
+      // Auto-trigger download
+      const a = document.createElement('a');
+      a.href = url; a.download = `W-9_${data.legalName.replace(/\s+/g,'_')}.pdf`;
+      a.click();
+
+      // Send to Make.com webhook (non-blocking)
+      sendToWebhook(data).catch(() => {});
+
+    } catch(err) {
+      document.getElementById('successIcon').textContent = '⚠️';
+      document.getElementById('successTitle').textContent = 'Something went wrong';
+      document.getElementById('generateError').textContent = "We couldn't generate your PDF. Please try again or contact support.";
+      document.getElementById('generateError').style.display = 'block';
+      console.error('PDF generation error:', err);
+    }
+  }
+
+  // ─── COLLECT FORM DATA ───
+  function collectFormData() {
+    const entity   = getRadio('entity');
+    const llcTax   = getRadio('llcTax');
+    const hasBiz   = getRadio('hasBiz');
+    const taxType  = getRadio('taxIdType');
+    const taxId    = document.getElementById('taxId').value.trim();
+    const digits   = taxId.replace(/\D/g,'');
+    return {
+      legalName:         document.getElementById('legalName').value.trim(),
+      bizName:           hasBiz === 'yes' ? (document.getElementById('bizName').value.trim() || '') : '',
+      entityType:        entity,
+      llcClass:          entity === 'LLC' && llcTax ? llcTax : '',
+      street:            document.getElementById('street').value.trim(),
+      city:              document.getElementById('city').value.trim(),
+      state:             document.getElementById('state').value.trim().toUpperCase(),
+      zip:               document.getElementById('zip').value.trim(),
+      taxType:           taxType,
+      ssn:               taxType === 'SSN' ? digits : '',
+      ein:               taxType === 'EIN' ? digits : '',
+      signDate:          document.getElementById('signDate').value,
+      signatureDataUrl:  document.getElementById('signatureCanvas').toDataURL('image/png'),
+    };
+  }
+
+  // ─── BUILD W-9 PDF ───────────────────────────────────────────────────────────
+  async function buildW9PDF(d) {
+    const { PDFDocument, rgb, StandardFonts, degrees } = PDFLib;
+    const pdfDoc = await PDFDocument.create();
+    const page   = pdfDoc.addPage([612, 792]); // US Letter
+    const { width, height } = page.getSize();
+
+    const helvetica        = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const helveticaBold    = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const helveticaOblique = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
+
+    const navy  = rgb(0.059, 0.141, 0.267);
+    const black = rgb(0, 0, 0);
+    const white = rgb(1, 1, 1);
+    const lgray = rgb(0.88, 0.88, 0.88);
+    const mgray = rgb(0.5, 0.5, 0.5);
+
+    // Helpers (y=0 at top of page)
+    const R = (x,y,w,h,color,opacity=1) =>
+      page.drawRectangle({ x, y:height-y-h, width:w, height:h, color, opacity });
+    const RB = (x,y,w,h,bc=black,bw=0.5) =>
+      page.drawRectangle({ x, y:height-y-h, width:w, height:h, borderColor:bc, borderWidth:bw, color:white });
+    const L = (x1,y1,x2,y2,c=black,t=0.5) =>
+      page.drawLine({ start:{x:x1,y:height-y1}, end:{x:x2,y:height-y2}, color:c, thickness:t });
+    const T = (s,x,y,sz=8,font=helvetica,color=black,opacity=1) => {
+      if (!s) return;
+      page.drawText(String(s), { x, y:height-y, size:sz, font, color, opacity });
+    };
+
+    // ── HEADER ──
+    R(0, 0, width, 54, navy);
+    T('Form',  14, 13, 7,  helveticaBold, white);
+    T('W-9',   14, 24, 22, helveticaBold, white);
+    T('(Rev. March 2024)', 14, 47, 6, helvetica, rgb(0.6,0.75,0.9));
+    T('Department of the Treasury', 58, 11, 6, helvetica, rgb(0.6,0.75,0.9));
+    T('Internal Revenue Service', 58, 20, 6, helvetica, rgb(0.6,0.75,0.9));
+    T('Request for Taxpayer Identification Number and Certification', 168, 20, 10, helveticaBold, white);
+    T('Go to www.irs.gov/FormW9 for instructions and the latest information.', 330, 44, 6, helveticaOblique, rgb(0.6,0.75,0.9));
+
+    // ── ROW 1: Name ──
+    let y = 54;
+    R(0, y, width, 13, lgray);
+    T('1  Name (as shown on your income tax return). Name is required on this line; do not leave this line blank.', 4, y+10, 6.5, helvetica, black);
+    RB(0, y+13, width, 20); T(d.legalName, 5, y+27, 10, helvetica, black);
+
+    // ── ROW 2: Business Name ──
+    y += 33;
+    R(0, y, width, 13, lgray);
+    T('2  Business name/disregarded entity name, if different from above', 4, y+10, 6.5, helvetica, black);
+    RB(0, y+13, width, 20); if (d.bizName) T(d.bizName, 5, y+27, 10, helvetica, black);
+
+    // ── ROW 3: Tax Classification ──
+    y += 33;
+    R(0, y, width*0.62, 13, lgray);
+    T('3a  Check appropriate box for federal tax classification of the person whose name is entered on line 1.', 4, y+10, 6.5, helvetica, black);
+    R(width*0.62, y, width*0.38, 13, lgray);
+    T('4  Exemptions', width*0.62+4, y+10, 6.5, helvetica, black);
+
+    // Entity checkboxes (2 rows)
+    const eTypes = [
+      {label:'Individual/sole proprietor or single-member LLC', val:'Individual/Sole Proprietor', col:0},
+      {label:'C Corporation', val:'C Corporation', col:1},
+      {label:'S Corporation', val:'S Corporation', col:2},
+      {label:'Partnership', val:'Partnership', col:3},
+      {label:'Trust/estate', val:'Trust/Estate', col:0, row:1},
+      {label:'LLC', val:'LLC', col:1, row:1},
+      {label:'Other', val:'Other', col:2, row:1},
+    ];
+    const eColX = [4, 175, 270, 360];
+    eTypes.forEach(e => {
+      const row = e.row || 0;
+      const bx = eColX[e.col]; const by = y + 17 + row * 14;
+      RB(bx, by, 9, 9, black, 0.7);
+      if (d.entityType === e.val) T('X', bx+1, by+8, 8, helveticaBold, navy);
+      T(e.label, bx+12, by+8, 6, helvetica, black);
+    });
+
+    // LLC line 3b
+    const llcLineY = y + 46;
+    T('3b  If "LLC," enter classification (C=C corp, S=S corp, P=Partnership) >', 4, llcLineY+8, 6, helvetica, black);
+    RB(310, llcLineY, 28, 12, black);
+    if (d.llcClass) T(d.llcClass, 320, llcLineY+9, 9, helveticaBold, black);
+
+    // Exemptions box (right side)
+    RB(width*0.62, y+13, width*0.38, 48);
+    T('Exempt payee code (if any)', width*0.62+4, y+24, 6, helvetica, mgray);
+    T('Exemption from FATCA reporting code (if any)', width*0.62+4, y+38, 6, helvetica, mgray);
+    T('(Applies to accounts maintained outside the U.S.)', width*0.62+4, y+47, 5.5, helveticaOblique, mgray);
+
+    // ── ROW 5: Street Address ──
+    y += 62;
+    R(0, y, width*0.72, 13, lgray);
+    T('5  Address (number, street, and apt. or suite no.) See instructions.', 4, y+10, 6.5, helvetica, black);
+    R(width*0.72, y, width*0.28, 13, lgray);
+    T("Requester's name and address (optional)", width*0.72+4, y+10, 6.5, helvetica, black);
+    RB(0, y+13, width*0.72, 18); T(d.street, 5, y+25, 9, helvetica, black);
+    RB(width*0.72, y+13, width*0.28, 36, black);
+
+    // ── ROW 6: City/State/ZIP ──
+    y += 31;
+    R(0, y, width*0.72, 13, lgray);
+    T('6  City, state, and ZIP code', 4, y+10, 6.5, helvetica, black);
+    RB(0, y+13, width*0.72, 18); T(`${d.city}, ${d.state}  ${d.zip}`, 5, y+25, 9, helvetica, black);
+
+    // ── ROW 7: Account Numbers ──
+    y += 31;
+    R(0, y, width, 13, lgray);
+    T('7  List account number(s) here (optional)', 4, y+10, 6.5, helvetica, black);
+    RB(0, y+13, width, 16);
+
+    // ── PART I: TIN ──
+    y += 33;
+    R(0, y, width, 15, navy);
+    T('Part I', 4, y+11, 9, helveticaBold, white);
+    T('Taxpayer Identification Number (TIN)', 52, y+11, 10, helveticaBold, white);
+    T('Enter your TIN in the appropriate box. The TIN provided must match the name given on line 1.', 280, y+8, 6, helvetica, rgb(0.7,0.82,1));
+    T('For individuals, this is generally your SSN. For other entities, it is your EIN.', 280, y+15, 6, helvetica, rgb(0.7,0.82,1));
+
+    y += 15;
+    T('Social security number', 4, y+9, 7, helvetica, black);
+
+    // SSN individual digit boxes
+    const ssnStartX = 4; const ssnBoxY2 = y+13;
+    const boxW = 19; const boxH = 20;
+    // 3 boxes
+    for (let i=0;i<3;i++) { RB(ssnStartX+i*boxW, ssnBoxY2, boxW-1, boxH, black, 0.8); if(d.ssn[i]) T(d.ssn[i], ssnStartX+i*boxW+6, ssnBoxY2+14, 11, helveticaBold, navy); }
+    T('-', ssnStartX+3*boxW+1, ssnBoxY2+13, 9, helveticaBold, black);
+    // 2 boxes
+    for (let i=0;i<2;i++) { const bx=ssnStartX+3*boxW+8+i*boxW; RB(bx, ssnBoxY2, boxW-1, boxH, black, 0.8); if(d.ssn[3+i]) T(d.ssn[3+i], bx+6, ssnBoxY2+14, 11, helveticaBold, navy); }
+    T('-', ssnStartX+5*boxW+9, ssnBoxY2+13, 9, helveticaBold, black);
+    // 4 boxes
+    for (let i=0;i<4;i++) { const bx=ssnStartX+5*boxW+16+i*boxW; RB(bx, ssnBoxY2, boxW-1, boxH, black, 0.8); if(d.ssn[5+i]) T(d.ssn[5+i], bx+6, ssnBoxY2+14, 11, helveticaBold, navy); }
+
+    T('OR', 198, ssnBoxY2+14, 7, helveticaBold, mgray);
+
+    // EIN
+    T('Employer identification number', 222, y+9, 7, helvetica, black);
+    const einStartX = 222;
+    for (let i=0;i<2;i++) { RB(einStartX+i*boxW, ssnBoxY2, boxW-1, boxH, black, 0.8); if(d.ein[i]) T(d.ein[i], einStartX+i*boxW+6, ssnBoxY2+14, 11, helveticaBold, navy); }
+    T('-', einStartX+2*boxW+1, ssnBoxY2+13, 9, helveticaBold, black);
+    for (let i=0;i<7;i++) { const bx=einStartX+2*boxW+8+i*boxW; RB(bx, ssnBoxY2, boxW-1, boxH, black, 0.8); if(d.ein[2+i]) T(d.ein[2+i], bx+6, ssnBoxY2+14, 11, helveticaBold, navy); }
+
+    // TIN note
+    ['Note: If the account is in more than one name, see the instructions for line 1. Also see What Name',
+     'and Number To Give the Requester for guidelines on whose number to enter.']
+    .forEach((ln,i) => T(ln, 435, y+9+i*9, 5.5, helveticaOblique, mgray));
+
+    // ── PART II: CERTIFICATION ──
+    y = ssnBoxY2 + 28;
+    R(0, y, width, 15, navy);
+    T('Part II', 4, y+11, 9, helveticaBold, white);
+    T('Certification', 52, y+11, 10, helveticaBold, white);
+
+    y += 15;
+    const certText = [
+      {bold:true,  t:'Under penalties of perjury, I certify that:'},
+      {bold:false, t:'1. The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me); and'},
+      {bold:false, t:'2. I am not subject to backup withholding because: (a) I am exempt from backup withholding, or (b) I have not been notified by the Internal Revenue'},
+      {bold:false, t:'   Service (IRS) that I am subject to backup withholding as a result of a failure to report all interest or dividends, or (c) the IRS has notified me'},
+      {bold:false, t:'   that I am no longer subject to backup withholding; and'},
+      {bold:false, t:'3. I am a U.S. citizen or other U.S. person (defined below); and'},
+      {bold:false, t:'4. The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct.'},
+    ];
+    certText.forEach((cl,i) => T(cl.t, 4, y+8+i*9, 6, cl.bold ? helveticaBold : helvetica, black));
+
+    y += certText.length * 9 + 4;
+    T('Certification instructions. You must cross out item 2 above if you have been notified by the IRS that you are currently subject to backup withholding because', 4, y+8, 5.5, helveticaOblique, black);
+    T('you have failed to report all interest and dividends on your tax return. For real estate transactions, item 2 does not apply.', 4, y+16, 5.5, helveticaOblique, black);
+
+    // ── SIGNATURE BAR ──
+    y += 24;
+    L(0, y, width, y, black, 1);
+    R(0, y, width, 14, lgray);
+    T('Sign',  4, y+8,  7, helveticaBold, black);
+    T('Here',  4, y+15, 7, helveticaBold, black);
+
+    const sigY = y + 14;
+    const sigW = width * 0.64;
+    RB(36, sigY, sigW, 32, black, 0.7);
+    T('Signature of U.S. person >', 38, sigY+8, 6, helvetica, mgray);
+
+    const dtX = 36 + sigW + 6;
+    const dtW = width - dtX - 4;
+    RB(dtX, sigY, dtW, 32, black, 0.7);
+    T('Date >', dtX+4, sigY+8, 6, helvetica, mgray);
+    T(d.signDate, dtX+4, sigY+23, 8, helvetica, black);
+
+    // Embed signature PNG
+    try {
+      const imgBytes = await fetch(d.signatureDataUrl).then(r => r.arrayBuffer());
+      const sigImg   = await pdfDoc.embedPng(imgBytes);
+      const dims     = sigImg.scaleToFit(sigW - 8, 22);
+      page.drawImage(sigImg, { x:40, y:height-sigY-31, width:dims.width, height:dims.height });
+    } catch(e) { /* silent */ }
+
+    // ── PAGE FOOTER ──
+    const fY = sigY + 40;
+    L(0, fY, width, fY, lgray, 0.5);
+    T('Cat. No. 10231X', 4, fY+10, 6, helvetica, mgray);
+    T('www.irs.gov/FormW9', width/2-28, fY+10, 6, helvetica, mgray);
+    T('Form W-9 (Rev. 3-2024)', width-108, fY+10, 6, helvetica, mgray);
+
+    // ── WATERMARK ──
+    page.drawText('W9CREATOR.COM', { x:100, y:180, size:42, font:helveticaBold,
+      color:rgb(0.85,0.92,0.85), opacity:0.12, rotate:degrees(35) });
+
+    return await pdfDoc.save();
+  }
+
+  // ─── MAKE.COM WEBHOOK ───
+  async function sendToWebhook(data) {
+    const WEBHOOK_URL = 'YOUR_MAKE_WEBHOOK_URL'; // ← Replace with your Make.com webhook URL
+    if (WEBHOOK_URL === 'YOUR_MAKE_WEBHOOK_URL') return;
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        legal_name:    data.legalName,
+        business_name: data.bizName,
+        entity_type:   data.entityType,
+        llc_class:     data.llcClass,
+        street:        data.street,
+        city:          data.city,
+        state:         data.state,
+        zip:           data.zip,
+        tax_type:      data.taxType,
+        sign_date:     data.signDate,
+        email:         data.email,
+        submitted_at:  new Date().toISOString(),
+      })
+    });
+  }
+
+  // ─── SIGNATURE PAD ───
+  let signaturePad = null;
+  let isDrawing = false;
+  let lastX = 0, lastY = 0;
+
+  function initSignaturePad() {
+    const canvas = document.getElementById('signatureCanvas');
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * window.devicePixelRatio;
+    canvas.height = rect.height * window.devicePixelRatio;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    ctx.strokeStyle = '#0f2444';
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    function getPos(e) {
+      const r = canvas.getBoundingClientRect();
+      if (e.touches) {
+        return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+      }
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+
+    function startDraw(e) {
+      e.preventDefault();
+      isDrawing = true;
+      const pos = getPos(e);
+      lastX = pos.x; lastY = pos.y;
+      ctx.beginPath();
+      ctx.moveTo(lastX, lastY);
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pos = getPos(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+      lastX = pos.x; lastY = pos.y;
+    }
+
+    function stopDraw(e) {
+      isDrawing = false;
+    }
+
+    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDraw);
+    canvas.addEventListener('mouseleave', stopDraw);
+    canvas.addEventListener('touchstart', startDraw, { passive: false });
+    canvas.addEventListener('touchmove', draw, { passive: false });
+    canvas.addEventListener('touchend', stopDraw);
+  }
+
+  function clearSignature() {
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+
+  function isSignatureEmpty() {
+    const canvas = document.getElementById('signatureCanvas');
+    const ctx = canvas.getContext('2d');
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    return !data.some(channel => channel !== 0);
+  }
+
+  function resetForm() {
+    document.querySelectorAll('.form-input').forEach(i => i.value = '');
+    document.querySelectorAll('.radio-option').forEach(r => r.classList.remove('selected'));
+    document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+    document.getElementById('bizNameField').style.display = 'none';
+    document.getElementById('taxIdInput').style.display = 'none';
+    document.getElementById('progressWrap').style.display = 'block';
+    document.getElementById('customerEmail').value = '';
+    clearSignature();
+    showStep(1);
+  }
+
+  function scrollToForm() {
+    document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Initialize
+  updateProgress(1);
+</script>
+</body>
+</html>
