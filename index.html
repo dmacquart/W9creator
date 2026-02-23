@@ -1103,7 +1103,7 @@
       const sigBytes = await fetch(d.signatureDataUrl).then(r => r.arrayBuffer());
       const sigImage = await pdfDoc.embedPng(sigBytes);
       const sigDims = sigImage.scaleToFit(240, 20);
-      page.drawImage(sigImage, { x: 62, y: 191, width: sigDims.width, height: sigDims.height });
+      page.drawImage(sigImage, { x: 134, y: 191, width: sigDims.width, height: sigDims.height });
     } catch(e) { /* silent */ }
 
     // Date text — sits to the right of the signature line on the same row
